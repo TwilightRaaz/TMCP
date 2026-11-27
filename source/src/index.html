@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#0c1013">
+<meta name="description" content="TMCP — a live Morse code radio transceiver. No login, no cost, open source. Built by Raaz.">
+<title>TMCP — The Morse Code Project</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ================= WELCOME ================= -->
+  <section id="screenWelcome" class="screen">
+    <div class="wel-top">
+      <h1 class="wel-mark">TMCP</h1>
+      <p class="wel-sub">The Morse Code Project</p>
+      <ul class="wel-badges">
+        <li>No Login</li>
+        <li>No Cost</li>
+        <li>Open Source</li>
+      </ul>
+    </div>
+
+    <div class="wel-key">
+      <div class="key-glow" aria-hidden="true"></div>
+      <button id="powerBtn" class="key-dial" aria-label="Power on">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <path d="M89.1 35.6 A38 38 0 1 1 30.9 35.6" class="key-arc"/>
+          <line x1="60" y1="20" x2="60" y2="58" class="key-bar"/>
+        </svg>
+        <span class="key-ticks" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <p class="wel-note">Powering on connects you to<br>the public airwaves.</p>
+  </section>
+
+  <!-- ================= HOME ================= -->
+  <section id="screenHome" class="screen" hidden>
+    <header class="bar">
+      <div class="brand2">
+        <span class="b-mark">TMCP</span>
+        <span class="b-sub">The Morse Code Project</span>
+      </div>
+      <div class="status" id="homeStatus">
+        <i class="dot" id="led" aria-hidden="true"></i><span id="ledTxt">STANDBY</span>
+      </div>
+      <button class="round-btn" id="openTune" aria-label="Open tuner">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="3" y1="7" x2="21" y2="7"/><circle cx="9" cy="7" r="2.6"/>
+          <line x1="3" y1="15" x2="21" y2="15"/><circle cx="16" cy="15" r="2.6"/>
+        </svg>
+      </button>
+    </header>
+
+    <div class="card c-receiver">
+      <div class="card-head">
+        <p class="ctitle">Receiver</p>
+        <button class="mini-btn" id="clearRxBtn">Clear</button>
+      </div>
+      <div class="tape" id="tape"><span class="idle">- No Signal -</span></div>
+      <div class="textarea" id="decoded"><span class="ph">Incoming letters land here.</span></div>
+    </div>
+
+    <div class="card c-transmitter">
+      <div class="card-head">
+        <p class="ctitle">Transmitter</p>
+        <button class="mini-btn" id="clearBtn">Clear</button>
+      </div>
+      <div class="textarea" id="sentText"><span class="ph">Your text lands here.</span></div>
+    </div>
+
+    <div class="card c-morse">
+      <p class="ctitle">Morse</p>
+      <div class="morse-row">
+        <button class="cross-btn" id="backspaceBtn" aria-label="Delete last symbol">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+        </button>
+        <div class="morse-box" id="morseBox" aria-live="polite"></div>
+        <button class="space-btn" id="spaceBtn" aria-label="Insert space">SPACE</button>
+        <button class="send-btn" id="sendBtn" aria-label="Send letter">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <button class="key-btn" id="keyBtn">
+      <span class="key-btn-glow" aria-hidden="true"></span>
+      <span class="key-btn-nub" aria-hidden="true"></span>
+      <span class="key-btn-label">KEY</span>
+    </button>
+
+    <button class="round-btn mute-btn" id="muteBtn" aria-pressed="false" aria-label="Toggle receive audio">
+      <svg viewBox="0 0 24 24" aria-hidden="true" id="muteIcon">
+        <path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7" class="spk"/>
+      </svg>
+    </button>
+  </section>
+
+  <!-- ================= TUNING ================= -->
+  <section id="screenTune" class="screen" hidden>
+    <header class="bar bar-tune">
+      <button class="back-btn" id="backBtn" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="status" id="tuneStatus">
+        <i class="dot" id="led2" aria-hidden="true"></i><span id="ledTxt2">STANDBY</span>
+      </div>
+    </header>
+
+    <div class="card c-mains">
+      <p class="ctitle">Mains</p>
+      <div class="readout wide" id="pwrMsg">LINK ESTABLISHED · BROKER.EMQX.IO:8084</div>
+      <button class="power-off" id="powerOffBtn">POWER OFF</button>
+    </div>
+
+    <div class="card c-tuner">
+      <p class="ctitle">Tuner</p>
+      <div class="tabs">
+        <button class="tab" id="tabLocal" aria-pressed="true">Local Airways</button>
+        <button class="tab" id="tabPrivate" aria-pressed="false">Private Band</button>
+      </div>
+
+      <!-- local -->
+      <div id="viewLocal">
+        <div class="readout green" id="geoMsg">GPS: Permission Denied - use Private Band</div>
+
+        <div class="dial">
+          <div class="dial-top" id="dialTop">110m</div>
+          <div class="dial-wrap">
+            <div class="dial-fade l" aria-hidden="true"></div>
+            <div class="dial-fade r" aria-hidden="true"></div>
+            <div class="dial-marker" aria-hidden="true"></div>
+            <div class="dial-scroll" id="dialScroll" role="slider" tabindex="0"
+                 aria-label="Transmission distance" aria-valuemin="1" aria-valuemax="6" aria-valuenow="2">
+              <!-- ticks injected by JS -->
+            </div>
+          </div>
+          <div class="dial-cap"><span id="dialLeft">11m</span><span id="dialRight">1.1Km</span></div>
+          <div class="dial-name" id="dialName">Walkie</div>
+        </div>
+
+        <div class="readout green" id="localFreq">BAND 3 : Waiting for GPS</div>
+      </div>
+
+      <!-- private -->
+      <div id="viewPrivate" hidden>
+        <p class="flabel">Frequency</p>
+        <input id="freqIn" class="tinput" type="text" inputmode="decimal"
+               placeholder="1627.92" autocomplete="off" spellcheck="false" maxlength="12">
+        <p class="flabel">Passcode (Shared Secret)</p>
+        <input id="passIn" class="tinput" type="password"
+               placeholder="••••••" autocomplete="off" spellcheck="false" maxlength="64">
+        <button class="tune-in" id="tuneBtn">TUNE IN</button>
+        <div class="readout green" id="privRead">TUNER : Not Tuned</div>
+      </div>
+    </div>
+
+    <div class="card c-sync">
+      <p class="ctitle">Sonic Sync</p>
+      <div class="row">
+        <button class="half-btn" id="syncTx">Send</button>
+        <button class="half-btn" id="syncRx">Receive</button>
+      </div>
+      <div class="readout green" id="syncMsg">SYNC : Idle</div>
+    </div>
+  </section>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script src="mqtt.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
